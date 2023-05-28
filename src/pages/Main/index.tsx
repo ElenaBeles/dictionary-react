@@ -12,6 +12,7 @@ import {Layout} from 'components/Layout';
 import {Input} from 'components/ui/Input';
 import {Checkbox} from 'components/ui/Checkbox';
 import WordAccordion from 'components/WordAccordion';
+import {filterWordsByParams} from '../../utils/filterWords';
 
 export const Main = () => {
 	const [search, setSearch] = useState<string | null>(null);
@@ -33,32 +34,8 @@ export const Main = () => {
 		if(!Array.isArray(data)) {
 			return;
 		}
-
-		const shortData: IExtendedWord[] = data
-			.slice(0,9)
-			.map(word => {
-				const filterDefs: string[] = [];
-				const hiddenDefs: string[] = [];
-
-				word.defs?.forEach(def => {
-					const [part, definition] = def.split('\t');
-
-					if(part === currentFilter || !currentFilter) {
-						filterDefs.push(def);
-					} else {
-						hiddenDefs.push(def);
-					}
-				});
-
-				return {
-					...word,
-					defs: filterDefs,
-					hiddenDefs
-				};
-			})
-			.filter(word => word.defs?.length > 0);
-
-		setWords(alphabetSort(shortData));
+		const sortedData = alphabetSort(filterWordsByParams(data, search, currentFilter));
+		setWords(sortedData);
 	}, [data, currentFilter]);
 
 	return (

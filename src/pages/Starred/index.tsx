@@ -3,6 +3,8 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {IExtendedWord, IWord} from 'models/word.interface';
 import {useDebounce} from 'utils/useDebounce';
 import {useAppDispatch, useAppSelector} from 'utils/redux-hooks';
+import {filterWordsByParams} from 'utils/filterWords';
+import {NullableString} from 'utils/types';
 import {MIDDLE_DELAY} from 'constants/delays';
 import {PART_OF_SPEECH_OPTIONS} from 'constants/filters';
 import {changeStarredList} from 'slices/starredWordsSlice';
@@ -13,46 +15,21 @@ import {Checkbox} from 'components/ui/Checkbox';
 import {WordsDaDList} from 'components/WordsDaDList';
 
 export const Starred = () => {
-	const [search, setSearch] = useState<string | null>(null);
 	const [words, setWords] = useState<IExtendedWord[]>([]);
-	const [currentFilter, setCurrentFilter] = useState<string | null>(null);
+	const [search, setSearch] = useState<NullableString>(null);
+	const [currentFilter, setCurrentFilter] = useState<NullableString>(null);
 
-	const data = useAppSelector(state => state.persistedReducer.starredWords) as IWord[];
-
+	const storeState = useAppSelector(state => state.persistedReducer.starredWords) as IWord[];
 	const { debounce } = useDebounce();
 
 	const handleSearch = useCallback(debounce((inputVal: string) => setSearch(inputVal), MIDDLE_DELAY), []);
 
 	useEffect(() => {
-		if(!Array.isArray(data)) {
+		if(!Array.isArray(storeState)) {
 			return;
 		}
-		const shortData = data
-			.filter(detail => detail.word.startsWith(search ?? ''))
-			.map(detail => {
-				const filterDefs: string[] = [];
-				const hiddenDefs: string[] = [];
-
-				detail.defs?.forEach(def => {
-					const [part, definition] = def.split('\t');
-
-					if(part === currentFilter || !currentFilter) {
-						filterDefs.push(def);
-					} else {
-						hiddenDefs.push(def);
-					}
-				});
-
-				return {
-					...detail,
-					defs: filterDefs,
-					hiddenDefs
-				};
-			})
-			.filter(word => word.defs?.length > 0);
-
-		setWords(shortData);
-	}, [data, currentFilter, search]);
+		setWords(filterWordsByParams(storeState, search, currentFilter));
+	}, [storeState, currentFilter, search]);
 
 	const dispatch = useAppDispatch();
 
