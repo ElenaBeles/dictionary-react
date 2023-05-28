@@ -1,10 +1,9 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
-import starredWordsSlice from 'slices/starredWordsSlice';
 import { persistStore, persistReducer } from 'redux-persist';
 import storageSession from 'redux-persist/lib/storage';
-import thunk from 'redux-thunk';
 import {TypedUseSelectorHook, useSelector} from 'react-redux';
-
+import thunk from 'redux-thunk';
+import starredWordsSlice from 'slices/starredWordsSlice';
 
 const persistConfig = {
 	key: 'root',
@@ -24,5 +23,3 @@ export const persistor = persistStore(store);
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
-
-export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;

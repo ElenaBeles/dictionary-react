@@ -1,5 +1,6 @@
 import React from 'react';
 import {NavLink} from 'react-router-dom';
+import {Icon} from 'components/ui/Icon';
 
 export const Header = () => {
 	return (
@@ -9,12 +10,13 @@ export const Header = () => {
 					className='text-white text-base hover:border-b-2 hover:border-b-white'
 					to='/'
 				>
-					WordKeeper
+					Word Keeper
 				</NavLink>
 				<NavLink
-					className='text-white text-base hover:border-b-2 hover:border-b-white'
+					className='flex text-white text-base hover:border-b-2 hover:border-b-white'
 					to='/starred'
 				>
+					<Icon name='star' className='mr-2'/>
 					StarredWords
 				</NavLink>
 			</nav>

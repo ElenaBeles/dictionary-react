@@ -3,6 +3,7 @@ import {useQuery} from 'react-query';
 
 import {IExtendedWord} from 'models/word.interface';
 import { useDebounce } from 'utils/useDebounce';
+import {alphabetSort} from 'utils/sort';
 import {MIDDLE_DELAY} from 'constants/delays';
 import {PART_OF_SPEECH_OPTIONS} from 'constants/filters';
 
@@ -10,7 +11,7 @@ import {getWords} from 'queries/wordsAPI';
 import {Layout} from 'components/Layout';
 import {Input} from 'components/ui/Input';
 import {Checkbox} from 'components/ui/Checkbox';
-import WordAccordion from 'components/ui/WordAccordion';
+import WordAccordion from 'components/WordAccordion';
 
 export const Main = () => {
 	const [search, setSearch] = useState<string | null>(null);
@@ -19,7 +20,7 @@ export const Main = () => {
 
 	const { debounce } = useDebounce();
 
-	const { data } = useQuery(['search', search], getWords,
+	const { data, isLoading } = useQuery(['search', search], getWords,
 		{
 			retry: 0,
 			refetchOnWindowFocus: false,
@@ -33,7 +34,7 @@ export const Main = () => {
 			return;
 		}
 
-		const shortData = data
+		const shortData: IExtendedWord[] = data
 			.slice(0,9)
 			.map(word => {
 				const filterDefs: string[] = [];
@@ -57,7 +58,7 @@ export const Main = () => {
 			})
 			.filter(word => word.defs?.length > 0);
 
-		setWords(shortData);
+		setWords(alphabetSort(shortData));
 	}, [data, currentFilter]);
 
 	return (

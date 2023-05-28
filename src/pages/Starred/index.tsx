@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 import {IExtendedWord, IWord} from 'models/word.interface';
 import {useDebounce} from 'utils/useDebounce';
+import {alphabetSort} from 'utils/sort';
 import {useAppSelector} from 'utils/redux-hooks';
 import {MIDDLE_DELAY} from 'constants/delays';
 import {PART_OF_SPEECH_OPTIONS} from 'constants/filters';
@@ -9,7 +10,7 @@ import {PART_OF_SPEECH_OPTIONS} from 'constants/filters';
 import {Layout} from 'components/Layout';
 import {Input} from 'components/ui/Input';
 import {Checkbox} from 'components/ui/Checkbox';
-import WordAccordion from 'components/ui/WordAccordion';
+import WordAccordion from 'components/WordAccordion';
 
 export const Starred = () => {
 	const [search, setSearch] = useState<string | null>(null);
@@ -50,7 +51,7 @@ export const Starred = () => {
 			})
 			.filter(word => word.defs?.length > 0);
 
-		setWords(shortData);
+		setWords(alphabetSort(shortData));
 	}, [data, currentFilter, search]);
 
 	return (
@@ -72,6 +73,9 @@ export const Starred = () => {
 				}
 			</aside>
 			<section className='flex flex-col gap-2 w-[100%] min-w-0'>
+				{
+					words.length === 0 && <span className='text-gray-600'>The list is currently empty</span>
+				}
 				{
 					words?.map(word =>
 						<WordAccordion key={word.word} data={word}/>
