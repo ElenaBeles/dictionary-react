@@ -13,7 +13,7 @@ const App = () => (
 	<QueryClientProvider client={queryClient}>
 		<Routes>
 			<Route index element={<Main/>}/>
-			<Route path="starred" element={<Starred/>}/>
+			<Route path='starred' element={<Starred/>}/>
 		</Routes>
 	</QueryClientProvider>
 );

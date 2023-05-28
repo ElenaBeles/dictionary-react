@@ -26,6 +26,8 @@
         "prettier"
     ],
     "rules": {
+        "no-unused-vars": "off",
+        "react/react-in-jsx-scope": "off",
         "indent": [
             "error",
             "tab"
@@ -43,7 +45,7 @@
         ],
         "jsx-quotes": [
             1,
-            "prefer-double"
+            "prefer-single"
         ]
     }
 }
