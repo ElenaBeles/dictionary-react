@@ -2,15 +2,15 @@ import React, {useCallback, useEffect, useState} from 'react';
 
 import {IExtendedWord, IWord} from 'models/word.interface';
 import {useDebounce} from 'utils/useDebounce';
-import {alphabetSort} from 'utils/sort';
-import {useAppSelector} from 'utils/redux-hooks';
+import {useAppDispatch, useAppSelector} from 'utils/redux-hooks';
 import {MIDDLE_DELAY} from 'constants/delays';
 import {PART_OF_SPEECH_OPTIONS} from 'constants/filters';
+import {changeStarredList} from 'slices/starredWordsSlice';
 
 import {Layout} from 'components/Layout';
 import {Input} from 'components/ui/Input';
 import {Checkbox} from 'components/ui/Checkbox';
-import WordAccordion from 'components/WordAccordion';
+import {WordsDaDList} from 'components/WordsDaDList';
 
 export const Starred = () => {
 	const [search, setSearch] = useState<string | null>(null);
@@ -51,8 +51,10 @@ export const Starred = () => {
 			})
 			.filter(word => word.defs?.length > 0);
 
-		setWords(alphabetSort(shortData));
+		setWords(shortData);
 	}, [data, currentFilter, search]);
+
+	const dispatch = useAppDispatch();
 
 	return (
 		<Layout className='flex gap-20 items-start'>
@@ -76,11 +78,10 @@ export const Starred = () => {
 				{
 					words.length === 0 && <span className='text-gray-600'>The list is currently empty</span>
 				}
-				{
-					words?.map(word =>
-						<WordAccordion key={word.word} data={word}/>
-					)
-				}
+				<WordsDaDList
+					data={words}
+					setData={v => dispatch(changeStarredList(v))}
+				/>
 			</section>
 		</Layout>
 	);

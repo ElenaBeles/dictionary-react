@@ -13,11 +13,14 @@ const starredWords = createSlice({
 		deleteWord(state, action) {
 			return state.filter(word => word.score !== action.payload.score);
 		},
-		cleanStarredDictionary() {
+		changeStarredList(state, action) {
+			return [...action.payload];
+		},
+		cleanStarredList() {
 			return [];
 		}
 	}
 });
 
 export default starredWords.reducer;
-export const { addWord, deleteWord, cleanStarredDictionary } = starredWords.actions;
+export const { addWord, deleteWord, changeStarredList, cleanStarredList } = starredWords.actions;
