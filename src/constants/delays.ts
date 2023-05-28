@@ -1,0 +1,1 @@
+export const MIDDLE_DELAY = 500;

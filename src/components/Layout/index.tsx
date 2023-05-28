@@ -13,7 +13,7 @@ export const Layout = ({children, className, ...rest}: Props) => {
 			<Header />
 			<main
 				{...rest}
-				className={cn('mx-auto my-10 max-w-4xl', className)}
+				className={cn('mx-auto py-10 max-w-4xl', className)}
 			>
 				{children}
 			</main>
