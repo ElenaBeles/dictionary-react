@@ -1,2 +1,1 @@
-# See in [https://social-network-front-eta.vercel.app/
-](https://dictionary-react-blond.vercel.app/)
+# See in https://dictionary-react-blond.vercel.app/
