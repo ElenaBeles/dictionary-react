@@ -50,7 +50,7 @@ export const WordsDaDList = ({data, setData, className, ...rest}: Props) => {
 						key={index}
 						className={className}
 					>
-						<WordAccordion key={detail.word} data={detail}/>
+						<WordAccordion key={detail.word} data={detail} />
 					</div>
 				))}
 		</>

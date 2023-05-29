@@ -2,6 +2,7 @@ import React, {useCallback, useEffect, useState} from 'react';
 import {useQuery} from 'react-query';
 
 import {IExtendedWord} from 'models/word.interface';
+import {PageableInterface} from 'models/pageable.interface';
 import { useDebounce } from 'utils/useDebounce';
 import {alphabetSort} from 'utils/sort';
 import {filterWordsByParams} from 'utils/filterWords';
@@ -14,18 +15,18 @@ import {Layout} from 'components/Layout';
 import {Input} from 'components/ui/Input';
 import {Checkbox} from 'components/ui/Checkbox';
 import WordAccordion from 'components/WordAccordion';
-import {PaginationControls} from '../../components/ui/PaginationControls';
+import {PaginationControls} from 'components/ui/PaginationControls';
 
 const MAX_PAGE_ITEMS = 10;
 
 export const Main = () => {
-	const [search, setSearch] = useState<NullableString>('free');
+	const [search, setSearch] = useState<NullableString>(null);
 	const [partFilter, setPartFilter] = useState<NullableString>(null);
 	const [words, setWords] = useState<IExtendedWord[]>([]);
 
-	const [pageFilter, setPageFilter] = useState({
-		currentPage: 1,
-		maxPage: 10
+	const [pageFilter, setPageFilter] = useState<PageableInterface>({
+		currentPage: 0,
+		maxPage: 0
 	});
 
 	const { debounce } = useDebounce();
@@ -43,29 +44,36 @@ export const Main = () => {
 		if(!Array.isArray(data)) {
 			return;
 		}
-		setPageFilter({
-			maxPage: Math.ceil(data.length / MAX_PAGE_ITEMS),
-			currentPage: 1
-		});
-		handleChangeWords();
+		handleChangeWords(true);
 	}, [data, partFilter]);
 
 
 	useEffect(() => {
+		if(!pageFilter) {
+			return;
+		}
 		handleChangeWords();
 	}, [pageFilter]);
 
-	const handleChangeWords = () => {
+	const handleChangeWords = (withPageCount = false) => {
 		if (!data) {
 			return;
 		}
 
-		const startPageIndex = (pageFilter.currentPage - 1) * MAX_PAGE_ITEMS + 1;
-		const endPageIndex = pageFilter.currentPage * MAX_PAGE_ITEMS - 1;
+		const filteredData = alphabetSort(filterWordsByParams(data, search, partFilter));
 
-		const currentPageData = data.slice(startPageIndex, endPageIndex);
-		const sortedData = alphabetSort(filterWordsByParams(currentPageData, search, partFilter));
-		setWords(sortedData);
+		if(withPageCount) {
+			setPageFilter({
+				currentPage: 1,
+				maxPage: Math.ceil(filteredData.length / MAX_PAGE_ITEMS),
+			});
+		}
+
+		const startPageIndex = (pageFilter!.currentPage - 1) * MAX_PAGE_ITEMS + 1;
+		const endPageIndex = pageFilter!.currentPage * MAX_PAGE_ITEMS - 1;
+
+		const currentPageData = filteredData.slice(startPageIndex, endPageIndex);
+		setWords(currentPageData);
 	};
 
 	return (
@@ -88,10 +96,10 @@ export const Main = () => {
 			</aside>
 			<section className='flex flex-col gap-2 w-[100%] min-w-0'>
 				{
-					pageFilter.maxPage > 2 &&
+					pageFilter &&
 					<PaginationControls data={pageFilter} changeCurrentPage={page => {
 						setPageFilter(prev => ({
-							...prev,
+							maxPage: prev?.maxPage ?? 1,
 							currentPage: page
 						}));
 					}}/>

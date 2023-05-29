@@ -38,7 +38,7 @@ const WordAccordion = ({data}: Props) => {
 					onClick={() => setIsOpen(prev => !prev)}
 					className={cn('mr-4 duration-500', isOpen && 'transform rotate-180')}
 				>
-					<Icon name='arrow-down' size={16}/>
+					<Icon name='arrow-down' size={16} />
 				</button>
 				<p className='font-bold'>{data.word}</p>
 				<button
